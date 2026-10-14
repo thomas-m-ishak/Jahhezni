@@ -1,0 +1,232 @@
+﻿@model IEnumerable<Jahhezni.Models.User>
+@using Jahhezni.Models
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    var orders = ViewBag.Orders as List<Order>;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary m-0">
+            🧑‍💼 لوحة تحكم الأدمن
+        </h2>
+        <div>
+            <a href="/Home/HomePage" class="btn btn-outline-dark fw-bold shadow-sm">
+                <i class="fas fa-home"></i> HomePage
+            </a>
+        </div>
+        <a asp-controller="Payment" asp-action="PaymentDashboard" class="btn" style="text-decoration: none; color: black;">
+            PaymentDashboard 🏠
+        </a>
+    </div>
+
+    @if (ViewBag.PendingProductsCount > 0)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <a href="/AdminDashboard/PendingProducts" class="text-decoration-none">
+                    <div class="card bg-light-warning border-warning shadow-sm p-3 animate__animated animate__pulse animate__infinite" style="border-left: 5px solid #ffc107; background-color: #fffdf5;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <h2 class="me-3 m-0">🔔</h2>
+                                <div>
+                                    <h5 class="fw-bold text-warning mb-1">إشعار: منتجات جديدة تنتظر موافقتك!</h5>
+                                    <p class="text-muted m-0">يوجد حالياً <strong class="text-danger">@ViewBag.PendingProductsCount</strong> منتج مضاف من قبل البائعين بحاجة إلى مراجعة وتفعيل لتظهر في الموقع.</p>
+                                </div>
+                            </div>
+                            <span class="btn btn-warning fw-bold text-dark btn-sm shadow-sm">عرض المنتجات والموافقة ➔</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
+
+    <div class="row mb-4 text-center">
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3 border-0 bg-white">
+                <h5 class="text-muted">👤 المستخدمين</h5>
+                <h3 class="text-primary fw-bold">@ViewBag.TotalUsers</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3 border-0 bg-white">
+                <h5 class="text-muted">🛒 الطلبات</h5>
+                <h3 class="text-success fw-bold">@ViewBag.TotalOrders</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3 border-0 bg-white">
+                <h5 class="text-muted">💰 إجمالي الإيرادات</h5>
+                <h3 class="text-warning fw-bold">@ViewBag.TotalSales ج.م</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3 border-0 bg-white">
+                <h5 class="text-muted">⏳ طلبات معلقة (Pending)</h5>
+                <h3 class="text-danger fw-bold">@ViewBag.PendingOrders</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4 text-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3 border-0" style="background-color: #f8fff9; border-top: 4px solid #198754 !important;">
+                <h5 class="text-success fw-bold">💵 أرباح المنصة 5%</h5>
+                <h3 class="text-success fw-bold">@ViewBag.PlatformProfit ج.م</h3>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3 border-0" style="background-color: #fdfcff; border-top: 4px solid #0dcaf0 !important;">
+                <h5 class="text-info fw-bold">🏪 مستحقات البائعين 95%</h5>
+                <h3 class="text-info fw-bold">@ViewBag.VendorMoney ج.م</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold py-3 text-dark">
+            👤 قائمة المستخدمين المسجلين
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>الإيميل</th>
+                        <th>الدور</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                    }
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td class="fw-bold">@user.Name</td>
+                            <td>@user.Email</td>
+                            <td>
+                                <span class="badge @(user.Role == "Admin" ? "bg-danger" : user.Role == "Vendor" ? "bg-success" : "bg-info")">
+                                    @user.Role
+                                </span>
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-danger fw-bold" href="/AdminDashboard/DeleteUser/@user.UserId" onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم نهائياً؟')">حذف</a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <form method="get" class="row mb-4 bg-light p-3 mx-0 rounded shadow-sm">
+        <div class="col-md-5 mb-2 mb-md-0">
+            <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="🔍 ابحث باسم المستخدم أو رقم الطلب" />
+        </div>
+        <div class="col-md-3 mb-2 mb-md-0">
+            <select name="status" class="form-select">
+                <option value="">كل الحالات</option>
+                <option value="pending">pending</option>
+                <option value="confirmed">confirmed</option>
+                <option value="delivered">delivered</option>
+                <option value="cancelled">cancelled</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-6">
+            <button class="btn btn-primary w-100 fw-bold">بحث</button>
+        </div>
+        <div class="col-md-2 col-6">
+            <a href="/AdminDashboard/Index" class="btn btn-secondary w-100 fw-bold">Reset</a>
+        </div>
+    </form>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-bold py-3 text-dark">
+            🛒 إدارة طلبات المنصة
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>المستخدم</th>
+                        <th>الإجمالي</th>
+                        <th>ربح المنصة 5%</th>
+                        <th>الحالة</th>
+                        <th>تغيير الحالة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (orders != null && orders.Any())
+                    {
+                        foreach (var order in orders)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@order.OrderId</td>
+                                <td>@order.User?.Name</td>
+                                <td class="text-success fw-bold">@order.OrderTotal ج.م</td>
+                                <td class="text-danger fw-bold">@(order.OrderTotal * 0.05m) ج.م</td>
+                                <td>
+                                    <span class="badge bg-warning text-dark px-2 py-1">@order.Status</span>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm w-auto d-inline-block" onchange="changeStatus(@order.OrderId,this.value)">
+                                        <option value="pending">pending</option>
+                                        <option value="confirmed">confirmed</option>
+                                        <option value="delivered">delivered</option>
+                                        <option value="cancelled">cancelled</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-primary fw-bold" href="/AdminDashboard/OrderDetails/@order.OrderId">تفاصيل</a>
+                                    <a class="btn btn-sm btn-success fw-bold" href="/AdminDashboard/Invoice/@order.OrderId">PDF</a>
+                                    <a class="btn btn-sm btn-danger fw-bold" href="/AdminDashboard/DeleteOrder/@order.OrderId" onclick="return confirm('حذف الطلب؟')">حذف</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-muted py-3">لا توجد طلبات متاحة حالياً 🛒</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        function changeStatus(orderId, status) {
+            fetch('/AdminDashboard/ChangeStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `orderId=${orderId}&status=${status}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+}

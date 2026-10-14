@@ -1,0 +1,248 @@
+﻿@model List<Jahhezni.Models.Product>
+
+@{
+    ViewData["Title"] = ViewBag.CategoryName;
+}
+
+<link rel="stylesheet" href="~/css/package.css" />
+
+<div class="cart-float"
+     onclick="location.href='/Home/CartPage'">
+
+    🛒 <span id="cartCount">0</span>
+
+</div>
+
+<div class="container mt-5" dir="rtl">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold m-0">@ViewBag.CategoryName</h2>
+        <a href="/Home/HomePage" class="btn btn-outline-secondary px-4 fw-bold shadow-sm rounded-pill">
+            🏠 العودة للرئيسية
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            @foreach (var product in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden; background-color: #fff;">
+
+                        <img src="@(string.IsNullOrEmpty(product.Images) || product.Images == "placeholder.jpg" || product.Images == "placeholder.png"
+                                                               ? "https://placehold.co/300x250?text=Jahhezni"
+                                                               : "/images/" + product.Images)"
+                     class="card-img-top img-fluid"
+                     style="height: 260px; width: 100%; object-fit: fill; border-top-left-radius: 12px; border-top-right-radius: 12px;"
+                     alt="منتج جهزني" />
+
+                        <div class="card-body text-end d-flex flex-column justify-content-between p-3" dir="rtl">
+
+                            <div>
+                                <span class="product-name d-none">@product.Name</span>
+
+                                <p class="product-desc text-dark mb-3" style="line-height: 1.6; font-size: 1.05rem; font-weight: 500; min-height: 55px;">
+                                    @product.Description
+                                </p>
+
+                                <div class="mb-3">
+                                    <span class="fw-bold text-success" style="font-size: 1.1rem;">
+                                        @product.Price ج.م
+                                    </span>
+                                </div>
+                            </div>
+
+                            <button class="add-btn btn btn-primary w-100 fw-bold py-2 mt-auto"
+                                    style="border-radius: 8px; background-color: #00bcd4; border: none;"
+                                    id="btn-@product.ProductId"
+                                    data-id="@product.ProductId"
+                                    onclick="toggleCart(this)">
+                                إضافة للسلة 🛒
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center fw-bold py-4 shadow-sm border-radius-15">
+            ✨ قريباً جداً.. جاري تجهيز وإضافة منتجات مميزة لهذا القسم! ✨
+        </div>
+    }
+</div>
+
+<style>
+    /* ستايل حاوية الصورة عشان تمنع خروج الصورة برا الكارت لما تكبر */
+    .img-container {
+        overflow: hidden;
+        border-radius: 12px;
+        height: 220px;
+        width: 100%;
+        position: relative;
+    }
+
+    /* تأثير الزووم الأنيق عند المرور بالماوس */
+    .zoom-img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease-in-out; /* حركة ناعمة جداً */
+    }
+
+    .product-card:hover .zoom-img {
+        transform: scale(1.1); /* تكبير الصورة بنسبة 10% زي الهووم */
+    }
+
+    /* بوردر ناعم للكارت لما الماوس ييجي عليه */
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px !important;
+        border: 1px solid #eee;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+        }
+
+    /* ستايل السلة العائمة الموحدة لتظهر بشكل شيك وثابت */
+    .cart-float {
+        position: fixed;
+        bottom: 30px;
+        left: 30px; /* بما إن الموقع عربي خليناها على الشمال عشان متغطيش على الكلام */
+        background: #4c8bff;
+        color: white;
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        box-shadow: 0 4px 20px rgba(76, 139, 255, 0.4);
+        z-index: 9999;
+        transition: transform 0.2s ease;
+    }
+
+        .cart-float:hover {
+            transform: scale(1.1);
+        }
+
+    #cartCount {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ff4747;
+        color: white;
+        min-width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+    }
+
+    .border-radius-15 {
+        border-radius: 15px;
+    }
+
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // دالة تحديث شكل الزراير والعداد من قاعدة البيانات
+        function updateUI() {
+            fetch('/Package/GetCartState')
+                .then(r => r.json())
+                .then(data => {
+                    // تحديث عداد السلة العائمة
+                    document.getElementById('cartCount').innerText = data.count;
+
+                    // نلف على كل زراير الإضافة في الصفحة
+                    document.querySelectorAll('.add-btn').forEach(btn => {
+                        const id = parseInt(btn.dataset.id);
+                        const exists = data.items.includes(id);
+
+                        if (exists) {
+                            // التعديل هنا: الزرار يفضل شغال وقابل للضغط عشان لو حب يحذفه
+                            btn.innerText = "تمت الإضافة ✅";
+                            btn.classList.remove('btn-primary');
+                            btn.classList.add('btn-success'); // بنلونه أخضر بس مش بنعمله disabled
+                        } else {
+                            // لو مش موجود يرجع لأصله
+                            btn.innerText = "إضافة للسلة 🛒";
+                            btn.classList.remove('btn-success');
+                            btn.classList.add('btn-primary');
+                        }
+                    });
+                })
+                .catch(err => console.error("Error fetching cart state:", err));
+        }
+
+        // دالة الإضافة أو الحذف عند الضغط على الزرار
+               function toggleCart(btn) {
+
+            const productId = parseInt(btn.dataset.id);
+
+            fetch('/Home/AddToCart?productId=' + productId, {
+
+                method: 'POST'
+
+            })
+
+            .then(r => r.json())
+
+            .then(data => {
+
+                if(data.success){
+
+                    let count =
+                    document.getElementById("cartCount");
+
+                    if(count){
+
+                        count.innerText =
+                        data.cartCount;
+                    }
+
+                    if(data.isAdded){
+
+                        btn.classList.remove("btn-primary");
+                        btn.classList.add("btn-success");
+                        btn.innerHTML =
+                        "تمت الإضافة ✅";
+
+                    } else {
+
+                        btn.classList.remove("btn-success");
+                        btn.classList.add("btn-primary");
+                        btn.innerHTML =
+                        "إضافة للسلة 🛒";
+                    }
+
+                }
+
+            })
+
+            .catch(err => console.log(err));
+
+        }
+
+        // تشغيل الفحص أول ما الصفحة تفتح
+        document.addEventListener('DOMContentLoaded', updateUI);
+    </script>
+}
+}

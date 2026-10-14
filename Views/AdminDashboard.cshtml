@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Jahhezni.Models.User>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+}
+
+<div class="admin-container">
+    <h2>لوحة تحكم الإدارة</h2>
+    <table class="table">
+        <tr>
+            <th>الاسم</th>
+            <th>الإيميل</th>
+            <th>الإجراءات</th>
+        </tr>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Name</td>
+                <td>@u.Email</td>
+                <td>
+                    <a asp-action="EditUser" asp-route-id="@u.UserId" class="btn btn-warning">تعديل</a>
+                    <form asp-action="DeleteUser" asp-route-id="@u.UserId" method="post" style="display:inline" onsubmit="return confirmDelete()">
+                        <button type="submit" class="btn btn-danger">حذف</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-dashboard.js" asp-append-version="true"></script>
+}

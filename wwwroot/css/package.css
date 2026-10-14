@@ -1,0 +1,67 @@
+﻿/* تصميم الكارت بشكل عام */
+.product-card {
+    border: none;
+    border-radius: 15px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+    /* تأثير عند تمرير الماوس على الكارت */
+    .product-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+
+/* حاوية الصورة للحفاظ على الأبعاد */
+.product-img-container {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+    background-color: #f8f9fa;
+}
+
+/* تأثير تكبير الصورة داخل الكارت */
+.product-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.15);
+}
+
+/* تنسيق السعر والبيانات */
+.price-badge {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.category-tag {
+    font-size: 0.8rem;
+    background-color: #e9ecef;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: #6c757d;
+}
+
+/* أنيميشن عند تحميل الصفحة */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.product-card {
+    animation: fadeInUp 0.5s ease backwards;
+}

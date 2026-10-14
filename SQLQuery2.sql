@@ -1,0 +1,1 @@
+DBCC CHECKIDENT ('Users', RESEED, 2); -- حط هنا رقم آخر مستخدم عندك في الجدول

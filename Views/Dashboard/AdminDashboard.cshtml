@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Jahhezni.Models.User>
+@{
+    ViewData["Title"] = "إدارة المستخدمين - جهّزني";
+    // العداد اللي بيخلي الترقيم يبدأ من 1 في الجدول
+    int rowNo = 1;
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0" style="border-radius: 15px;">
+        <div class="card-body p-4">
+
+            @* الجزء العلوي: العنوان والزراير اللي كانت ناقصة *@
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0" style="color: #ff69b4;">
+                    إدارة جميع المستخدمين ❤️
+                </h3>
+
+                @* الزراير اللي طلبت ترجعها على الشمال *@
+                <div>
+                    <a href="/Home/HomePage" class="btn btn-outline-dark me-2 fw-bold shadow-sm">
+                        <i class="fas fa-home"></i> الذهاب للـ HomePage
+                    </a>
+                    <a href="/Account/Register" class="btn fw-bold text-white shadow-sm" style="background-color: #ff69b4;">
+                        <i class="fas fa-plus-circle"></i> إضافة مستخدم
+                    </a>
+                </div>
+            </div>
+
+            @* الجدول بالترقيم المسلسل *@
+            <div class="table-responsive">
+                <table class="table table-hover align-middle border text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>الدور</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                @* عرض العداد المسلسل (1, 2, ..) *@
+                                <td class="fw-bold text-muted">@rowNo</td>
+
+                                <td class="fw-bold">@user.Name</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <span class="badge @(user.Role == "Admin" ? "bg-danger" : "bg-success") p-2">
+                                        @user.Role
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/Dashboard/EditUser/@user.UserId" class="btn btn-sm btn-info text-white me-1 shadow-sm">
+                                        تعديل
+                                    </a>
+                                    <a href="/Dashboard/DeleteUser/@user.UserId"
+                                       class="btn btn-sm btn-danger shadow-sm"
+                                       onclick="return confirm('هل تريد حذف (@user.Name)؟');">
+                                        حذف
+                                    </a>
+                                </td>
+                            </tr>
+                            rowNo++;
+     @* زيادة العداد في كل لفة *@
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* ربط أيقونات FontAwesome عشان تظهر جنب الزراير *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+}

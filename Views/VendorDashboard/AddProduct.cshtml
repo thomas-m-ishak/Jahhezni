@@ -1,0 +1,65 @@
+﻿@model Jahhezni.Models.Product
+
+<div class="container mt-5" dir="rtl">
+    <div class="card shadow p-4 border-radius-15" style="max-width: 600px; margin: 0 auto;">
+        <h3 class="mb-4 text-center fw-bold text-success">➕ إضافة منتج جديد</h3>
+
+        <form asp-controller="VendorDashboard"
+              asp-action="AddProduct"
+              method="post"
+              enctype="multipart/form-data">
+
+            <!-- اسم المنتج -->
+            <div class="mb-3">
+                <label class="form-label fw-bold small">اسم المنتج</label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold small">وصف المنتج</label>
+                <input asp-for="Description" class="form-control" required />
+            </div>
+
+            <!-- السعر -->
+            <div class="mb-3">
+                <label class="form-label fw-bold small">السعر (ج.م)</label>
+                <input asp-for="Price" type="number" class="form-control" required />
+            </div>
+
+            <!-- صورة المنتج (رفع من الجهاز) -->
+            <div class="mb-3">
+                <label class="form-label fw-bold small">صورة المنتج</label>
+                <input type="file"
+                       name="imageFile"
+                       class="form-control"
+                       accept="image/*"
+                       required />
+            </div>
+
+            <!-- القسم -->
+            <div class="mb-3">
+                <label class="form-label fw-bold small">القسم</label>
+                <select asp-for="Category" class="form-select" required>
+                    <option value="Electronic devices">Electronic devices</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Kitchen">Kitchen</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Appliances">Appliances</option>
+                </select>
+            </div>
+
+            <!-- أزرار -->
+            <div class="d-flex gap-2 align-items-center" dir="rtl">
+                <button type="submit" class="btn btn-success w-75 fw-bold py-2">
+                    حفظ المنتج
+                </button>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary w-25 fw-bold py-2 text-center">
+                    إلغاء
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>

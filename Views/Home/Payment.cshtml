@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "الدفع";
+}
+
+<div class="container mt-5 text-center" dir="rtl">
+
+    <div class="card shadow p-5 border-0 mx-auto" style="max-width: 600px; border-radius: 20px; background-color: #fff;">
+
+        <h3 class="fw-bold mb-4" style="color: #ff6b8b;">💳 اختر طريقة الدفع المفضلة</h3>
+
+        <h4 class="mb-4">إجمالي المبلغ المطلوب: <span class="text-success fw-bold">@ViewBag.Total جنيه</span></h4>
+
+        <form method="post" action="/Payment/ProcessPaymentForm">
+            <input type="hidden" name="orderId" value="@ViewBag.OrderId" />
+
+            <div class="mb-4 text-start">
+                <label class="form-label fw-bold">طريقة الدفع:</label>
+                <select name="PaymentMethod" class="form-select rounded-pill p-3" style="border-color: #ffe0e5;">
+                    <option value="Cash">الدفع عند الاستلام (كاش) 💵</option>
+                    <option value="Card">دفع إلكتروني (فيزا / ماستر كارد) 💳</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-lg w-100 text-white fw-bold rounded-pill shadow-sm"
+                    style="background: linear-gradient(135deg, #ff6b8b, #ff8eaf); border: none; padding: 12px; transition: 0.3s;">
+                تأكيد الدفع وإنهاء الطلب 🚀
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

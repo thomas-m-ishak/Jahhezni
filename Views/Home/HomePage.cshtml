@@ -1,0 +1,361 @@
+﻿@model Jahhezni.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    :root {
+        --gray-bg: #f8f9fa;
+        --header-gray: #ececec;
+        --blue-main: #4c8bff;
+    }
+
+    body {
+        background-color: var(--gray-bg);
+        font-family: 'Cairo', sans-serif;
+        margin: 0;
+        direction: rtl;
+    }
+
+    .site-header {
+        background: var(--header-gray);
+        padding: 15px 50px;
+        display: flex;
+        gap: 30px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+
+        .nav-item:hover {
+            color: var(--blue-main);
+        }
+
+    .main-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 25px;
+        padding: 20px;
+    }
+
+    .glass-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        height: fit-content;
+        position: sticky;
+        top: 80px;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .p-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #eee;
+        transition: 0.3s;
+        text-align: center;
+    }
+
+        .p-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .p-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+    .add-btn {
+        width: 90%;
+        margin: 10px auto;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: var(--blue-main);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .add-btn.added {
+            background: #28a745 !important;
+        }
+
+    .cart-float {
+        position: fixed;
+        left: 30px;
+        bottom: 30px;
+        background: #333;
+        color: white;
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+</style>
+
+<header class="site-header">
+    <a asp-controller="Home" asp-action="HomePage" class="nav-item">🏠 الرئيسية</a>
+    <a asp-controller="Home" asp-action="Category" asp-route-id="Furniture" class="nav-item">🛋️ أثاث</a>
+    <a asp-controller="Home" asp-action="Category" asp-route-id="Electronic devices" class="nav-item">📺 أجهزة كهربائية</a>
+    <a asp-controller="Home" asp-action="Category" asp-route-id="Appliances" class="nav-item">🍳 أدوات منزلية</a>
+    <a asp-controller="Home" asp-action="Category" asp-route-id="Kitchen" class="nav-item">👨‍🍳 مطبخ</a>
+    <a asp-controller="Home" asp-action="Category" asp-route-id="Clothing" class="nav-item">👗 ملابس</a>
+    <form action="@Url.Action("Search", "Home")" method="get" class="d-flex align-items-center mx-auto" style="max-width: 500px; width: 100%;" dir="rtl">
+        <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white border border-light">
+            <input type="text" name="searchWord" class="form-control border-0 px-4 py-2"
+                   placeholder="ابحثي عن فستان، مطبخ، شاشة، مروحة..."
+                   style="font-size: 0.95rem; focus: none; outline: none;" required />
+            <button type="submit" class="btn btn-primary px-4" style="background-color: #00bcd4; border: none;">
+                🔍 بحث
+            </button>
+        </div>
+    </form>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger">
+                Logout
+            </button>
+        </form>
+    }
+</header>
+
+<div class="main-container">
+
+    <aside class="glass-box">
+        <h4 style="text-align:center">💰 ميزانيتك</h4>
+        <form asp-action="GeneratePackage" method="post">
+            <label style="font-size: 13px;">حد ميزانيتك (أقل رقم 50,000):</label>
+            <input type="number" name="budget" value="50000" min="50000"
+                   style="width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:10px; font-family: inherit;">
+
+            <div style="font-size:14px; margin:15px 0; line-height: 2;">
+                <label><input type="checkbox" name="bestPrice"> 🏷️ أفضل سعر</label><br>
+                <label><input type="checkbox" name="fastShipping"> 🚀 أسرع شحن</label><br>
+                <label><input type="checkbox" name="highQuality"> ⭐ أعلى جودة</label>
+            </div>
+
+            <button type="submit" style="width:100%; padding:12px; background:var(--blue-main); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">باقة جهّزني المقترحة ✨</button>
+        </form>
+    </aside>
+
+    <section class="product-grid">
+        @foreach (var p in Model.Products)
+        {
+            <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden; background-color: #fff;">
+
+                <img src="@(string.IsNullOrEmpty(p.Images) || p.Images == "placeholder.jpg" || p.Images == "placeholder.png"
+                                                   ? "https://placehold.co/300x250?text=Jahhezni"
+                                                   : "/Images/" + p.Images)"
+                 class="card-img-top img-fluid"
+                 style="height: 260px; width: 100%; object-fit: fill; border-top-left-radius: 12px; border-top-right-radius: 12px;"
+                 alt="منتج جهزني" />
+
+                <div class="card-body text-end d-flex flex-column justify-content-between p-3" dir="rtl">
+
+                    <div>
+                        <p class="text-dark mb-3" style="line-height: 1.6; font-size: 1.05rem; font-weight: 500; min-height: 55px;">
+                            @p.Description
+                        </p>
+
+                        <div class="mb-3">
+                            <span class="fw-bold text-success" style="font-size: 1.1rem;">
+                                @p.Price ج.م
+                            </span>
+                        </div>
+                    </div>
+
+                    <button class="add-btn btn btn-primary w-100 fw-bold py-2 mt-auto"
+                            style="border-radius: 8px; background-color: #00bcd4; border: none;"
+                            id="btn-@p.ProductId"
+                            data-id="@p.ProductId"
+                            data-name="@p.Name"
+                            data-price="@p.Price"
+                            onclick="toggleCart(this)">
+                        إضافة للسلة 🛒
+                    </button>
+
+                </div>
+            </div>
+                }
+    </section>
+</div>
+
+<!-- 🛒 السلة -->
+<div class="cart-float"
+     onclick="location.href='/Home/CartPage'">
+
+    🛒 <span id="cartCount">0</span>
+
+</div>
+
+<script>
+
+    // 1. تحديث العداد فقط
+    function updateUI() {
+
+        const cartCount =
+        document.getElementById('cartCount');
+
+        if (cartCount) {
+
+            let current =
+            parseInt(cartCount.innerText) || 0;
+
+            cartCount.innerText =
+            current;
+        }
+    }
+
+        function sendMessage() {
+        var inputElement = document.getElementById("userInput");
+        var messageText = inputElement.value.trim();
+        if (messageText === "") return;
+
+        var chatWindow = document.getElementById("chatWindow");
+
+        // 1. عرض رسالة المستخدم في الشات
+        var userBubble = `
+            <div class="mb-3 text-end">
+                <div class="d-inline-block p-2 rounded-3 user-msg shadow-sm text-end" style="max-width: 85%;">
+                    ${messageText}
+                </div>
+            </div>`;
+        chatWindow.innerHTML += userBubble;
+        inputElement.value = ""; // تفريغ الإدخال
+        chatWindow.scrollTop = chatWindow.scrollHeight; // سكرول لأسفل
+
+        // 2. عرض مؤشر "جاري التفكير..." مؤقتاً
+        var typingBubble = `
+            <div class="mb-3 text-start" id="typingIndicator">
+                <div class="d-inline-block p-2 rounded-3 bg-light text-muted border">
+                    ⏳ جاري التفكير والكتابة...
+                </div>
+            </div>`;
+        chatWindow.innerHTML += typingBubble;
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        // 3. إرسال الطلب بالـ AJAX للباك إيند
+        fetch('/Chatbot/SendMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ Message: messageText })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // حذف مؤشر الكتابة
+            var indicator = document.getElementById("typingIndicator");
+            if (indicator) indicator.remove();
+
+            if (data.success) {
+                // 4. عرض رد الـ AI المنسق
+                var aiBubble = `
+                    <div class="mb-3 text-start">
+                        <div class="d-inline-block p-2 rounded-3 ai-msg shadow-sm text-start" style="max-width: 85%;">
+                            ${data.response}
+                        </div>
+                    </div>`;
+                chatWindow.innerHTML += aiBubble;
+            } else {
+                var errorBubble = `
+                    <div class="mb-3 text-start">
+                        <div class="d-inline-block p-2 rounded-3 bg-danger text-white shadow-sm text-start" style="max-width: 85%;">
+                            ❌ حدث خطأ: ${data.response}
+                        </div>
+                    </div>`;
+                chatWindow.innerHTML += errorBubble;
+            }
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        })
+        .catch(err => {
+            var indicator = document.getElementById("typingIndicator");
+            if (indicator) indicator.remove();
+            console.error(err);
+        });
+    }
+
+    // تشغيل الإرسال عند الضغط على زرار Enter في الكيبورد
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+
+    // 2. الإضافة والحذف من السلة
+    function toggleCart(btn) {
+
+        const productId =
+        parseInt(btn.dataset.id);
+
+        fetch('/Home/AddToCart?productId=' + productId, {
+
+            method: 'POST'
+
+        })
+
+        .then(r => r.json())
+
+        .then(data => {
+
+            if(data.success){
+
+                let count =
+                document.getElementById("cartCount");
+
+                if(count){
+
+                    count.innerText =
+                    data.cartCount;
+                }
+
+                if(data.isAdded){
+
+                    btn.classList.remove("btn-primary");
+                    btn.classList.add("btn-success");
+
+                    btn.innerHTML =
+                    "تمت الإضافة ✅";
+
+                }
+                else{
+
+                    btn.classList.remove("btn-success");
+                    btn.classList.add("btn-primary");
+
+                    btn.innerHTML =
+                    "إضافة للسلة 🛒";
+                }
+            }
+
+        })
+
+        .catch(err =>
+            console.log(err)
+        );
+    }
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        updateUI
+    );
+
+</script>

@@ -1,0 +1,197 @@
+﻿@model List<Jahhezni.Models.PreparationItem>
+
+@{
+    ViewData["Title"] = "سلة المنتجات";
+
+    // ✅ التعديل هنا: حساب الإجمالي صح من جوه الـ Product المرتبط
+    var total = Model.Sum(x => x.DesiredQty * x.Product.Price);
+
+    var returnUrl = ViewBag.ReturnUrl as string ?? "/Home/HomePage";
+}
+
+<link rel="stylesheet" href="~/css/package.css" />
+
+<div class="container mt-5" dir="rtl">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="text-primary fw-bold">
+            🛒 سلة المنتجات
+        </h2>
+
+        <a href="/Home/HomePage"
+           class="btn btn-secondary">
+
+            ⬅️ الرجوع للرئيسية
+
+        </a>
+
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+
+            @foreach (var item in Model)
+            {
+                // قراءة مسار الصورة من المنتج المرتبط
+                var imagePath = "/images/" + (item.Product.Images ?? "placeholder.jpg");
+
+                <div class="col-md-6 mb-3">
+
+                    <div class="card shadow-sm p-3">
+
+                        <div class="d-flex">
+
+                            <img src="@imagePath"
+                                 style="width:120px;
+                                                height:120px;
+                                                object-fit:cover;
+                                                border-radius:10px;" />
+
+                            <div class="flex-grow-1 ms-3">
+
+                                <h5 class="fw-bold">
+                                    @item.Product.Name
+                                </h5>
+
+                                <p class="text-muted small">
+                                    @item.Product.Description
+                                </p>
+
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-success fw-bold">
+                                        @item.Product.Price ج.م
+                                    </span>
+                                </div>
+
+                                <div class="mt-3 d-flex align-items-center gap-2">
+
+                                    <button class="btn btn-sm btn-success"
+                                            onclick="changeQty(this, @item.ItemId, @item.Product.Price, 1)">
+                                        +
+                                    </button>
+
+                                    <span class="qty-value fw-bold px-2">
+                                        @item.DesiredQty
+                                    </span>
+
+                                    <button class="btn btn-sm btn-warning"
+                                            onclick="changeQty(this, @item.ItemId, @item.Product.Price, -1)">
+                                        -
+                                    </button>
+
+                                    <button class="btn btn-sm btn-danger"
+                                            onclick="removeItem(@item.ItemId)">
+                                        حذف
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <div class="card mt-4 p-4 text-center shadow-sm">
+
+            <h4>
+                الإجمالي:
+                <span id="totalPrice"
+                      class="text-success fw-bold">
+                    @total ج.م
+                </span>
+            </h4>
+
+            <button class="btn mt-3 px-5 text-white fw-bold rounded-pill shadow-sm"
+                    style="background: linear-gradient(135deg, #ff6b8b, #ff8eaf); border: none; font-size: 1.05rem;"
+                    onclick="goToConfirmOrder()">
+                تأكيد الطلب (Confirm Order) ✨
+            </button>
+
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            السلة فاضية 🛒
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        function removeItem(itemId) {
+            // بنمسح مباشرة عن طريق الـ ItemId من الداتابيز
+            fetch('/Package/RemoveItem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ itemId: itemId })
+            })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    location.reload();
+                }
+            });
+        }
+
+        function changeQty(button, itemId, price, change) {
+            let parent = button.parentElement;
+            let qtySpan = parent.querySelector(".qty-value");
+            let currentQty = parseInt(qtySpan.innerText);
+
+            // لو اليوزر بيدوس ناقص وهي 1، مش هنعمل حاجة عشان متبقاش صفر
+            if (change === -1 && currentQty <= 1) {
+                return;
+            }
+
+            // بنبعت التحديث للداتابيز في الـ Back-end فوراً
+            fetch('/Package/UpdateQty', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ itemId: itemId, change: change })
+            })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    currentQty += change;
+                    qtySpan.innerText = currentQty;
+                    updateTotal();
+                }
+            });
+        }
+
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll(".row .card").forEach(card => {
+                let priceText = card.querySelector(".text-success");
+                let qtyText = card.querySelector(".qty-value");
+
+                if (priceText && qtyText) {
+                    let price = parseFloat(priceText.innerText);
+                    let qty = parseInt(qtyText.innerText);
+                    total += price * qty;
+                }
+            });
+
+            document.getElementById("totalPrice").innerText = total + " ج.م";
+        }
+                function goToConfirmOrder(){
+            window.location.href = '/Home/ConfirmOrder';
+        }
+            </script>
+}

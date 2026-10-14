@@ -1,0 +1,28 @@
+﻿@model Jahhezni.Models.Product
+
+@{
+    ViewData["Title"] = "حذف منتج";
+}
+
+<div class="container mt-5" dir="rtl">
+    <div class="card shadow p-4 border-radius-15" style="max-width: 550px; margin: 0 auto; border-top: 5px solid #dc3545;">
+        <h3 class="text-danger fw-bold text-center mb-4">⚠️ تأكيد حذف المنتج</h3>
+
+        <div class="text-center mb-4">
+            <img src="/images/@Model.Images" width="120" height="120" style="object-fit:cover; border-radius:15px;" class="shadow-sm mb-3" />
+            <h4 class="fw-bold text-dark">@Model.Name</h4>
+            <h4 class="fw-bold text-dark">@Model.Description</h4>
+            <p class="text-muted">هل أنت متأكد تماماً من رغبتك في حذف هذا المنتج من متجرك؟</p>
+            <span class="badge bg-danger-subtle text-danger px-3 py-2 fs-6">السعر: @Model.Price ج.م</span>
+        </div>
+
+        <form asp-controller="VendorDashboard" asp-action="DeleteProduct" method="post">
+            <input type="hidden" asp-for="ProductId" name="id" />
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger w-75 fw-bold py-2">نعم، قم بالحذف 🗑</button>
+                <a asp-action="Index" class="btn btn-secondary w-25 fw-bold py-2">إلغاء</a>
+            </div>
+        </form>
+    </div>
+</div>

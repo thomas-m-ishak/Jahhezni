@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Jahhezni.Models.Product>
+
+@{
+    ViewData["Title"] = "المنتجات المعلقة للمراجعة";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-warning m-0">🔔 مراجعة المنتجات الجديدة</h2>
+        <a href="/AdminDashboard/Index" class="btn btn-secondary fw-bold">⬅️ رجوع للوحة الأدمن</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body table-responsive">
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <h2 class="text-success mb-2">🎉 عظيم جداً!</h2>
+                    <p class="text-muted m-0 fs-5">لا توجد أي منتجات معلقة في انتظار المراجعة حالياً.</p>
+                </div>
+            }
+            else
+            {
+                <table class="table text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>الصورة</th>
+                            <th>اسم المنتج</th>
+                            <th>السعر</th>
+                            <th>القسم</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="~/Images/@product.Images" width="65" height="65" class="shadow-sm" style="border-radius:10px; object-fit: cover;" />
+                                </td>
+                                <td class="fw-bold fs-5 text-dark">@product.Name</td>
+                                <td class="text-success fw-bold fs-5">@product.Price ج.م</td>
+                                <td><span class="badge bg-secondary">@product.Category</span></td>
+                                <td>
+                                    <form asp-action="ApproveProduct" asp-route-productId="@product.ProductId" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-success fw-bold px-3 btn-sm shadow-sm me-2">
+                                            ✅ موافقة ونشر فوراً
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="RejectProduct" asp-route-productId="@product.ProductId" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger fw-bold px-3 btn-sm shadow-sm" onclick="return confirm('هل أنت متأكد من رفض وحذف هذا المنتج؟')">
+                                            ❌ رفض وحذف
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

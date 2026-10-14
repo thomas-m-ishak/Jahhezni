@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null; // الصفحة دي مستقلة بتصميمها
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جهّزني | Jahhezni</title>
+    @* ربط ملف الـ CSS المنفصل *@
+    <link rel="stylesheet" href="~/css/welcome.css" asp-append-version="true">
+</head>
+<body>
+    <div class="container">
+        <h1>🎀 جهّزني</h1>
+        <h2>كل ما تحتاجينه لتجهيز زفافك في مكان واحد</h2>
+
+        <div class="buttons">
+            @* الربط بالأكشنز الموجودة في الـ AccountController *@
+            <a asp-controller="Account" asp-action="Login" class="btn">تسجيل الدخول</a>
+            <a asp-controller="Account" asp-action="Register" class="btn">إنشاء حساب</a>
+        </div>
+
+        <footer>© 2026 Jahhezni. جميع الحقوق محفوظة.</footer>
+    </div>
+
+    @* ربط ملف الـ JS المنفصل *@
+    <script src="~/js/welcome.js" asp-append-version="true"></script>
+</body>
+</html>

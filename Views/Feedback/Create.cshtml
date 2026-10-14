@@ -1,0 +1,113 @@
+﻿@model Jahhezni.Models.Order
+
+@{
+    ViewData["Title"] = "Feedback";
+}
+
+<div class="container mt-5" dir="rtl">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow border-0"
+                 style="border-radius:20px;">
+
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h3>⭐ تقييم الطلب</h3>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <form method="post" action="/Feedback/Submit">
+
+                        <input type="hidden"
+                               name="orderId"
+                               value="@ViewBag.OrderId" />
+
+                        <!-- المنتجات -->
+                        <div class="mb-4">
+
+                            <h5 class="fw-bold mb-3">
+                                المنتجات التي طلبتها
+                            </h5>
+
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <div class="border rounded p-2 mb-2">
+
+                                    <div class="fw-bold">
+                                        @item.Product?.Name
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        الكمية: @item.Qty
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                        <!-- Rating -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+                                تقييمك
+                            </label>
+
+                            <select name="rating"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">اختر التقييم</option>
+                                <option value="5">⭐⭐⭐⭐⭐ ممتاز</option>
+                                <option value="4">⭐⭐⭐⭐ جيد جدًا</option>
+                                <option value="3">⭐⭐⭐ جيد</option>
+                                <option value="2">⭐⭐ مقبول</option>
+                                <option value="1">⭐ سيء</option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Comment -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+                                تعليقك
+                            </label>
+
+                            <textarea name="comment"
+                                      class="form-control"
+                                      rows="5"
+                                      placeholder="اكتب رأيك في الطلب أو المنتجات أو البائع..."></textarea>
+
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-grid gap-3">
+
+                            <button type="submit"
+                                    class="btn btn-success btn-lg">
+                                ✅ إرسال التقييم
+                            </button>
+
+                            <a href="/Home/HomePage"
+                               class="btn btn-outline-primary">
+                                🛍 متابعة التسوق
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

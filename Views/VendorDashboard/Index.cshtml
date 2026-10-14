@@ -1,0 +1,197 @@
+﻿@model IEnumerable<Jahhezni.Models.Product>
+@using Jahhezni.Models
+
+@{
+    ViewData["Title"] = "Vendor Dashboard";
+    var orders = ViewBag.Orders as List<Order>;
+}
+
+<div class="container mt-4">
+
+    <h2 class="fw-bold text-success mb-4">
+        🏪 لوحة تحكم البائع
+    </h2>
+
+    <div>
+        <a href="/Home/HomePage"
+           class="btn btn-outline-dark me-2 fw-bold shadow-sm">
+            <i class="fas fa-home"></i> HomePage
+        </a>
+
+        <a href="/VendorDashboard/AddProduct"
+           class="btn btn-success shadow-sm">
+            ➕ إضافة منتج
+        </a>
+    </div>
+
+    <div class="row mt-4 text-center">
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>المنتجات</h5>
+                <h3 class="text-primary">@ViewBag.TotalProducts</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>الطلبات</h5>
+                <h3 class="text-success">@ViewBag.TotalOrders</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>الأرباح</h5>
+                <h3 class="text-warning">@ViewBag.TotalSales ج.م</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3">
+                <h5>مخزون منخفض</h5>
+                <h3 class="text-danger">@ViewBag.LowStock</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4 p-3">
+        <h5 class="fw-bold mb-3">📊 إحصائيات المبيعات</h5>
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header fw-bold">
+            📦 منتجاتي
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>الصورة</th>
+                        <th>اسم المنتج</th>
+                        <th>السعر</th>
+                        <th>المخزون</th>
+                        <th>حالة المنتج</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{
+                        int i = 1;
+                    }
+
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+
+                            <td>
+                                <img src="~/Images/@product.Images"
+                                     width="60"
+                                     height="60"
+                                     style="border-radius:10px;" />
+                            </td>
+
+                            <td>@product.Name</td>
+
+                            <td class="text-success fw-bold">@product.Price ج.م</td>
+
+                            <td>
+                                @if (product.Stock < 5)
+                                {
+                                    <span class="badge bg-danger">@product.Stock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@product.Stock</span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (product.IsActive)
+                                {
+                                    <span class="badge bg-success">نشط</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">قيد المراجعة</span>
+                                }
+                            </td>
+
+                            <td>
+                                <a href="/VendorDashboard/EditProduct/@product.ProductId"
+                                   class="btn btn-sm btn-primary">
+                                    تعديل
+                                </a>
+
+                                <a href="/VendorDashboard/DeleteProduct/@product.ProductId"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('حذف المنتج؟')">
+                                    حذف
+                                </a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header fw-bold">
+            🛒 طلبات العملاء
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table text-center">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>العميل</th>
+                        <th>الإجمالي</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var order in orders)
+                    {
+                        <tr>
+                            <td>#@order.OrderId</td>
+                            <td>@order.User?.Name</td>
+                            <td class="text-success">@order.OrderTotal ج.م</td>
+                            <td>
+                                <span class="badge bg-warning">@order.Status</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded",()=>{
+            var total=@ViewBag.TotalSales ?? 0;
+            var orders=@ViewBag.TotalOrders ?? 0;
+            var products=@ViewBag.TotalProducts ?? 0;
+
+            new Chart(document.getElementById('salesChart'), {
+                type:'doughnut',
+                data:{
+                    labels:['المبيعات','الطلبات','المنتجات'],
+                    datasets:[{
+                        data:[total, orders, products]
+                    }]
+                }
+            });
+        });
+    </script>
+}

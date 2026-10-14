@@ -1,0 +1,127 @@
+﻿@model Jahhezni.Models.User
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow border-0" style="width: 100%; max-width: 500px; border-radius: 15px;">
+        <div class="card-body p-4">
+            <h3 class="text-center fw-bold mb-4" style="color: #ff69b4;">تعديل بيانات الحساب</h3>
+
+            <form asp-action="EditUser" method="post">
+                <input type="hidden" asp-for="UserId" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">الاسم الكامل</label>
+                    <input asp-for="Name" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">البريد الإلكتروني</label>
+                    <input asp-for="Email" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">رقم الهاتف</label>
+                    <input asp-for="Phone" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">المحافظة</label>
+                    <select asp-for="Address" class="form-select text-end" required>
+                        <option value="" disabled selected hidden>اختر المحافظة...</option>
+                        <option value="القاهرة">القاهرة</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="الإسكندرية">الإسكندرية</option>
+                        <option value="القليوبية">القليوبية</option>
+                        <option value="الدقهلية">الدقهلية</option>
+                        <option value="الشرقية">الشرقية</option>
+                        <option value="المنوفية">المنوفية</option>
+                        <option value="الغربية">الغربية</option>
+                        <option value="دمياط">دمياط</option>
+                        <option value="البحيرة">البحيرة</option>
+                        <option value="كفر الشيخ">كفر الشيخ</option>
+                        <option value="بور سعيد">بور سعيد</option>
+                        <option value="الإسماعيلية">الإسماعيلية</option>
+                        <option value="السويس">السويس</option>
+                        <option value="الفيوم">الفيوم</option>
+                        <option value="بني سويف">بني سويف</option>
+                        <option value="المنيا">المنيا</option>
+                        <option value="أسيوط">أسيوط</option>
+                        <option value="سوهاج">سوهاج</option>
+                        <option value="قنا">قنا</option>
+                        <option value="الأقصر">الأقصر</option>
+                        <option value="أسوان">أسوان</option>
+                        <option value="البحر الأحمر">البحر الأحمر</option>
+                        <option value="الوادي الجديد">الوادي الجديد</option>
+                        <option value="مطروح">مطروح</option>
+                        <option value="شمال سيناء">شمال سيناء</option>
+                        <option value="جنوب سيناء">جنوب سيناء</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">تغيير كلمة المرور (اختياري)</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="اتركها فارغة للحفاظ على القديمة" />
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label small fw-bold">
+                        نوع الحساب
+                    </label>
+
+                    <select asp-for="Role"
+                            class="form-select"
+                            id="roleSelect">
+
+                        <option value="Bride" selected>
+                            مشتري
+                        </option>
+
+                        <option value="Vendor">
+                            بائع
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div id="vendorFields" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">اسم المتجر</label>
+                        <input type="text" name="MerchantName" id="merchantNameInput" class="form-control" placeholder="اسم المتجر" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">القسم</label>
+                        <select name="Category" class="form-select">
+                            <option value="Electronic devices">أجهزة كهربائية</option>
+                            <option value="Furniture">أثاث</option>
+                            <option value="Kitchen">مطبخ</option>
+                            <option value="Clothing">ملابس</option>
+                            <option value="Appliances">أدوات منزلية</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn w-100 fw-bold text-white mt-3" style="background-color: #ff69b4;">حفظ التعديلات</button>
+                <a href="/Dashboard/UserDashboard" class="btn btn-light w-100 mt-2">إلغاء</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleVendorFields() {
+        var role = document.getElementById("roleSelect").value;
+        var vendorFields = document.getElementById("vendorFields");
+
+        if (role === "Vendor") {
+            vendorFields.style.display = "block";
+        } else {
+            vendorFields.style.display = "none";
+        }
+    }
+
+    document.getElementById("roleSelect").addEventListener("change", toggleVendorFields);
+
+    // تشغيل أولي عند فتح الصفحة
+    window.onload = toggleVendorFields;
+</script>

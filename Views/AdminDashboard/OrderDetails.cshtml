@@ -1,0 +1,363 @@
+﻿@model Jahhezni.Models.Order
+@using Jahhezni.Models
+
+@{
+    ViewData["Title"] = "تفاصيل العملية";
+
+    var logs = ViewBag.Logs as List<ActivityLog>;
+}
+
+
+<div class="container mt-4">
+
+
+    <h2 class="fw-bold text-primary mb-4">
+        🧾 تفاصيل الطلب #@Model.OrderId
+    </h2>
+
+
+
+    <!-- CUSTOMER -->
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header fw-bold">
+            👤 بيانات العميل
+        </div>
+
+
+        <div class="card-body">
+
+
+            <p>
+                <strong>الاسم:</strong>
+                @Model.User.Name
+            </p>
+
+
+            <p>
+                <strong>الإيميل:</strong>
+                @Model.User.Email
+            </p>
+
+
+            <p>
+                <strong>الهاتف:</strong>
+                @Model.User.Phone
+            </p>
+
+
+            <p>
+                <strong>العنوان:</strong>
+                @Model.User.Address
+            </p>
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+    <!-- ORDER INFO -->
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header fw-bold">
+            🛒 معلومات الطلب
+        </div>
+
+
+
+        <div class="card-body">
+
+
+            <p>
+                رقم الطلب:
+                <strong>
+                    #@Model.OrderId
+                </strong>
+            </p>
+
+
+            <p>
+                التاريخ:
+                @Model.CreatedAt.ToString("yyyy-MM-dd")
+            </p>
+
+
+            <p>
+                الحالة:
+
+                <span class="badge bg-warning">
+                    @Model.Status
+                </span>
+
+            </p>
+
+
+            <p>
+                الإجمالي:
+
+                <span class="text-success fw-bold">
+
+                    @Model.OrderTotal ج.م
+
+                </span>
+
+            </p>
+
+
+
+            <p>
+                💰 عمولة المنصة 5%:
+
+                <strong class="text-danger">
+
+                    @(Model.OrderTotal * 0.05m) ج.م
+
+                </strong>
+
+            </p>
+
+
+
+            <p>
+                🏪 للبائع:
+
+                <strong class="text-success">
+
+                    @(Model.OrderTotal - (Model.OrderTotal * 0.05m)) ج.م
+
+                </strong>
+
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+    <!-- PRODUCTS -->
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header fw-bold">
+            📦 المنتجات المشتراة
+        </div>
+
+
+
+        <div class="card-body table-responsive">
+
+
+            <table class="table text-center">
+
+
+                <thead class="table-light">
+
+
+                    <tr>
+
+                        <th>الصورة</th>
+                        <th>المنتج</th>
+                        <th>السعر</th>
+                        <th>الكمية</th>
+                        <th>الإجمالي</th>
+
+                    </tr>
+
+
+                </thead>
+
+
+
+                <tbody>
+
+
+                    @foreach (var item in Model.OrderItems)
+                    {
+
+
+                        <tr>
+
+
+                            <td>
+
+                                <img src="~/Images/@item.Product.Images"
+                                     width="70"
+                                     height="70"
+                                     style="border-radius:10px;" />
+
+                            </td>
+
+
+                            <td>
+                                @item.Product.Name
+                            </td>
+
+
+                            <td>
+                                @item.UnitPrice ج.م
+                            </td>
+
+
+                            <td>
+                                @item.Qty
+                            </td>
+
+
+                            <td class="text-success fw-bold">
+
+                                @(item.UnitPrice* item.Qty) ج.م
+
+                            </td>
+
+
+                        </tr>
+
+
+                    }
+
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+    <!-- ACTIVITY LOG -->
+
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header fw-bold">
+
+            📋 Activity Log
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            @if (logs != null && logs.Any())
+            {
+
+
+                foreach (var log in logs)
+                {
+
+
+                    <p>
+
+                        <b>
+                            @log.Action
+                        </b>
+
+                        -
+
+                        @log.Details
+
+                        <br />
+
+                        <small>
+                            @log.Timestamp
+                        </small>
+
+
+                    </p>
+
+
+                }
+
+            }
+
+            else
+            {
+
+                <p class="text-muted">
+                    لا يوجد سجل نشاط
+                </p>
+
+            }
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- BUTTONS -->
+
+
+    <div class="d-flex gap-2">
+
+
+        <a href="/AdminDashboard/Index"
+           class="btn btn-secondary">
+
+            ⬅ رجوع للداشبورد
+
+        </a>
+
+
+
+        <a href="/Home/HomePage"
+           class="btn btn-success">
+
+            ➕ إضافة منتج
+
+        </a>
+
+
+
+
+        <a href="/AdminDashboard/DeleteOrder/@Model.OrderId"
+           class="btn btn-danger"
+           onclick="return confirm('حذف الطلب؟')">
+
+            🗑 حذف الطلب
+
+        </a>
+
+
+    </div>
+
+
+
+</div>

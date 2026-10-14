@@ -1,0 +1,99 @@
+﻿@model Jahhezni.Models.LoginViewModel
+
+@{
+    // هذا السطر هو الحل لإزالة الـ Header (المستطيل الأبيض) والـ Footer الافتراضيين
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جهّزني - تسجيل الدخول</title>
+    @* تأكد من وجود مكتبات Bootstrap في ملفك، أو استخدام ملف CSS الذي قدمته سابقاً *@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    @* إذا كنت تستخدم ملف login.css المنفصل، قم بربطه هنا *@
+    @* <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" /> *@
+
+    @* ستايل سريع لتطبيق التصميم الودي على الصفحة المستقلة *@
+    <style>
+        body {
+            background-color: #f7d2d7; /* اللون الوردي للخلفية */
+            font-family: 'Amiri', serif; /* أو أي خط تفضله */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container-fluid {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                @* هذا هو الجزء الخاص ببطاقة تسجيل الدخول الوردية التي تظهر في الصورة *@
+                <div class="card shadow-lg p-5" style="border-radius: 20px; border: none;">
+                    <header class="text-center mb-4">
+                        <h1 class="fw-bold" style="color: #9c27b0; font-size: 2.2em;">
+                            🎀 جهّزني - تسجيل الدخول
+                        </h1>
+                        <p class="text-muted">أدخلي بياناتك للدخول إلى حسابك.</p>
+                    </header>
+
+                    <form asp-action="Login" method="post" id="loginForm">
+                        @* ملخص الأخطاء *@
+                        <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="form-label fw-bold" style="color: #9c27b0;">
+                                <i class="fas fa-envelope"></i> البريد الإلكتروني
+                            </label>
+                            <input asp-for="Email" class="form-control" placeholder="أدخلي بريدك الإلكتروني" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Password" class="form-label fw-bold" style="color: #9c27b0;">
+                                <i class="fas fa-lock"></i> كلمة المرور
+                            </label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="أدخلي كلمة المرور" required />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 10px; background-color: #9c27b0; border: none;">
+                            <i class="fas fa-sign-in-alt"></i> دخول
+                        </button>
+                    </form>
+
+                    <p id="result" class="text-center mt-3"></p>
+
+                    <div class="links text-center mt-4">
+                        <a asp-controller="Account" asp-action="Register" style="color: #9c27b0; text-decoration: none;">ليس لديك حساب؟ سجلي الآن</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* تأكد من إضافة مكتبات الـ Scripts هنا لأننا لم نعد نستخدم الـ Layout *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @* إضافة ملف login.js المنفصل *@
+    @* <script src="~/js/login.js" asp-append-version="true"></script> *@
+
+    @* مكتبات الـ Validation *@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+</body>
+</html>

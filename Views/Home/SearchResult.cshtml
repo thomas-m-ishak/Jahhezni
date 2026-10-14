@@ -1,0 +1,143 @@
+﻿@model List<Jahhezni.Models.Product>
+@{
+    ViewData["Title"] = "نتائج البحث عن: " + ViewBag.SearchTerm;
+}
+
+<div class="container my-5" dir="rtl" style="font-family: 'Cairo', sans-serif;">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">🔍 نتائج البحث</h3>
+            <p class="text-muted small mb-0">تبحثين عن: <span class="badge bg-info text-white fs-6 px-3 rounded-pill">@ViewBag.SearchTerm</span></p>
+        </div>
+        <a href="@Url.Action("HomePage", "Home")" class="btn btn-outline-secondary rounded-pill px-4 fw-bold shadow-sm transition-all">
+            🏠 العودة للرئيسية
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center my-5 py-5 border rounded-3 bg-light shadow-sm" style="border-radius: 15px;">
+            <div class="mb-4" style="font-size: 4rem;">✨</div>
+            <h4 class="fw-bold text-secondary mb-3">هذا البند غير متوفر حالياً للاسف</h4>
+            <p class="text-muted fs-5 mb-4">ولكنه سيكون موجوداً قريباً جداً.. تابعينا!</p>
+            <a href="@Url.Action("HomePage", "Home")" class="btn btn-primary rounded-pill px-5 py-2 fw-bold" style="background-color: #00bcd4; border: none;">
+                تصفح باقي المنتجات 😍
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var product in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden; background-color: #fff;">
+
+                        <img src="@(string.IsNullOrEmpty(product.Images) || product.Images == "placeholder.jpg" || product.Images == "placeholder.png"
+                                                      ? "https://placehold.co/300x250?text=Jahhezni"
+                                                      : "/images/" + product.Images)"
+                     class="card-img-top img-fluid" style="height: 260px; width: 100%; object-fit: fill;" />
+
+                        <div class="card-body text-end d-flex flex-column justify-content-between p-3">
+                            <div>
+                                <span class="product-name d-none">@product.Name</span>
+
+                                <p class="product-desc text-dark mb-3" style="line-height: 1.6; font-size: 1.05rem; font-weight: 500; min-height: 55px;">
+                                    @product.Description
+                                </p>
+
+                                <div class="mb-3">
+                                    <span class="fw-bold text-success" style="font-size: 1.1rem;">
+                                        @product.Price ج.م
+                                    </span>
+                                </div>
+                            </div>
+
+                            <button class="add-btn btn btn-primary w-100 fw-bold py-2 mt-auto"
+                                    style="border-radius: 8px; background-color: #00bcd4; border: none;"
+                                    id="btn-@product.ProductId"
+                                    data-id="@product.ProductId"
+                                    onclick="toggleCart(this)">
+                                إضافة للسلة 🛒
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+    }
+</div>
+
+<div class="position-fixed bottom-0 start-0 m-4" style="z-index: 1050;">
+
+    <a href="@Url.Action("CartPage", "Home")"
+       class="btn btn-lg text-white rounded-circle shadow-lg d-flex align-items-center justify-content-center position-relative"
+       style="width: 65px; height: 65px; background-color: #ff5722; font-size: 1.5rem; box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;">
+
+        🛒
+
+        <span id="cart-badge"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 12px;">
+
+            0
+
+        </span>
+
+    </a>
+
+</div>
+@section Scripts {
+    <script>
+        function toggleCart(button) {
+            var productId = button.dataset.id;
+
+            fetch('/Home/AddToCart?productId=' + productId, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 1. تشغيل الـ Toggle للزرار (قلب الألوان والنص)
+                    if (data.isAdded) {
+                        button.classList.remove("btn-primary");
+                        button.classList.add("btn-success");
+                        button.innerHTML = "تمت الإضافة ✅";
+                    } else {
+                        button.classList.remove("btn-success");
+                        button.classList.add("btn-primary");
+                        button.innerHTML = "إضافة للسلة 🛒";
+                    }
+
+                    // 2. تحديث العداد الذكي (بدون تعديل الـ Layout)
+                    // الفكرة هنا: بندور على أي عنصر شايل الـ Count بأي اسم ID محتمل في مشروعك
+                    let cartBadge = document.getElementById("cart-badge") ||
+                                    document.getElementById("CartBadge") ||
+                                    document.getElementById("cartCount") ||
+                                    document.getElementById("cart-count") ||
+                                    document.querySelector(".cart-count"); // لو واخد كلاس مش ID
+
+                    // لقطنا الـ count من السيرفر سواء بحروف كابيتال أو سمول
+                    let serverCount = data.cartCount !== undefined ? data.cartCount : data.CartCount;
+
+                    if (cartBadge && serverCount !== undefined) {
+                        cartBadge.innerText = serverCount;
+                    } else if (cartBadge) {
+                        // حل بديل (Fallback): لو السيرفر مبعتش الرقم، الـ JS هيزود أو ينقص محلياً
+                        let currentCount = parseInt(cartBadge.innerText) || 0;
+                        if (data.isAdded) {
+                            cartBadge.innerText = currentCount + 1;
+                        } else {
+                            cartBadge.innerText = currentCount > 0 ? currentCount - 1 : 0;
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                alert("حدث خطأ أثناء تحديث السلة");
+            });
+        }
+    </script>
+}

@@ -1,0 +1,79 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    height: 100vh;
+    /* تأكد من وضع صورة الخلفية في مجلد wwwroot/images لو حابب تستخدمها محلياً */
+    background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 192, 203, 0.3)), url('https://images.unsplash.com/photo-1600523117927-3b1e3df3b4e5?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 30px;
+    padding: 50px 60px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    animation: fadeIn 1.5s ease;
+}
+
+h1 {
+    font-size: 2.6em;
+    color: #b76e79;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.3em;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    background: #b76e79;
+    padding: 14px 35px;
+    border-radius: 30px;
+    margin: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+    .btn:hover {
+        background: #a35464;
+        transform: scale(1.05);
+        color: white; /* لضمان ثبات لون النص عند الـ hover */
+    }
+
+footer {
+    margin-top: 25px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

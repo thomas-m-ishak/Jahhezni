@@ -1,0 +1,131 @@
+﻿@using Microsoft.AspNetCore.Identity
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - جهّزني</title>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    
+    <div class="container-fluid px-0">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-contact">
+                <div class="phone-avatar">
+                    <img src="https://cdn-icons-png.flaticon.com/512/724/724664.png" alt="اتصل بنا">
+                </div>
+                <div class="phone-numbers">
+                    <p>📞 01552646380</p>
+                    <p>📞 01272984363</p>
+                </div>
+            </div>
+
+            <div class="footer-info">
+                <h3>منصة جهّزني 🎀</h3>
+                <p>مساعدك الأول لتجهيز منزلك بأفضل جودة وأنسب ميزانية. بنجمع لك كل اللي تحتاجه في مكان واحد وبنساعدك تختار بذكاء.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 جميع الحقوق محفوظة لفريق Die Vorgetzten</p>
+        </div>
+    </footer>
+
+    <style>
+        .main-footer {
+            background-color: #ececec; /* نفس لون الهيدر الرمادي */
+            padding: 40px 0 20px 0;
+            margin-top: 50px;
+            border-top: 2px solid #ddd;
+            direction: rtl;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .footer-contact {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .phone-avatar img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .phone-numbers p {
+            margin: 0;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+            text-align: right;
+        }
+
+            .footer-info h3 {
+                color: #4c8bff; /* اللون الأزرق الأساسي */
+                margin-bottom: 10px;
+            }
+
+            .footer-info p {
+                color: #666;
+                line-height: 1.6;
+                font-size: 14px;
+            }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* عشان الـ Footer يثبت تحت خالص حتى لو الصفحة فاضية */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main, .container, .main-container {
+            flex: 1;
+        }
+    </style>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

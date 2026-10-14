@@ -1,0 +1,214 @@
+﻿@model List<Jahhezni.ViewModels.PaymentVM>
+
+@{
+    ViewData["Title"] = "لوحة تحكم المدفوعات";
+
+    // استقبال القيم الحسابية من الكنترولر مع وضع قيمة افتراضية صفر لو فاضية
+    decimal totalRevenue = ViewBag.TotalRevenue ?? 0;
+    decimal ourCommission = ViewBag.OurCommission ?? 0;
+    decimal vendorsShare = ViewBag.VendorsShare ?? 0;
+}
+
+<div class="container-fluid py-4 px-5" style="direction: ltr; text-align: left;">
+
+    <!-- الهيدر وزرار العودة -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div>
+            <h2 class="fw-bold text-dark m-0">Payments Dashboard</h2>
+            <small class="text-muted">Manage and monitor all incoming client transactions and platform shares</small>
+        </div>
+
+        <a asp-controller="AdminDashboard" asp-action="Index" class="btn btn-outline-secondary d-flex align-items-center gap-2 shadow-sm fw-semibold px-3 py-2">
+            <span class="fs-5">🏠</span> Return to Dashboard
+        </a>
+    </div>
+
+    <!-- 📊 صف كروت الإحصائيات المالية المطور -->
+    <div class="row g-4 mb-5">
+        <!-- كارت إجمالي الإيرادات الناجحة -->
+        <div class="col-12 col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-gradient-primary rounded-3 text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-semibold uppercase tracking-wider fs-7 text-white-50">Total Paid Revenue</span>
+                        <span class="fs-3">💰</span>
+                    </div>
+                    <h2 class="fw-bold m-0 font-monospace">@totalRevenue.ToString("N2") <span class="fs-6 fw-normal">EGP</span></h2>
+                    <p class="text-white-50 small m-0 mt-2">Total successful payments received</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- كارت عمولة جاهزني الـ 5% -->
+        <div class="col-12 col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-gradient-success rounded-3 text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-semibold uppercase tracking-wider fs-7 text-white-50">Jahhezni Share (5%)</span>
+                        <span class="fs-3">📈</span>
+                    </div>
+                    <h2 class="fw-bold m-0 font-monospace">@ourCommission.ToString("N2") <span class="fs-6 fw-normal">EGP</span></h2>
+                    <p class="text-white-50 small m-0 mt-2">Platform operational net profit</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- كارت مستحقات البائعين الـ 95% -->
+        <div class="col-12 col-md-4">
+            <div class="card h-100 shadow-sm border-0 bg-gradient-warning rounded-3 text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-semibold uppercase tracking-wider fs-7 text-white-50">Vendors Share (95%)</span>
+                        <span class="fs-3">🏪</span>
+                    </div>
+                    <h2 class="fw-bold m-0 font-monospace">@vendorsShare.ToString("N2") <span class="fs-6 fw-normal">EGP</span></h2>
+                    <p class="text-white-50 small m-0 mt-2">Net due amount to be paid to vendors</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بطاقة جدول العمليات المالي -->
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="m-0 fw-bold text-dark">Transaction History</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle m-0" style="min-width: 800px;">
+                    <thead class="table-dark text-uppercase fs-7 font-monospace">
+                        <tr>
+                            <th class="ps-4 py-3 text-center" style="width: 100px;">Order ID</th>
+                            <th class="py-3">Amount</th>
+                            <th class="py-3">Payment Method</th>
+                            <th class="py-3 text-center" style="width: 150px;">Status</th>
+                            <th class="pe-4 py-3" style="width: 220px;">Transaction Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="fs-6 text-secondary">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 py-3 text-center fw-bold text-dark">#@item.OrderId</td>
+                                    <td class="py-3 fw-semibold text-success">
+                                        @item.Amount.ToString("N2") <span class="fs-7 text-muted fw-normal">EGP</span>
+                                    </td>
+                                    <td class="py-3">
+                                        @if (item.Method?.ToLower() == "online")
+                                        {
+                                            <span class="text-primary fw-medium">💳 @item.Method</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fw-medium">💵 @item.Method</span>
+                                        }
+                                    </td>
+                                    <td class="py-3 text-center">
+                                        @if (item.Status?.ToLower() == "paid")
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 fw-semibold" style="font-size: 0.85rem;">
+                                                Paid
+                                            </span>
+                                        }
+                                        else if (item.Status?.ToLower() == "pending delivery" || item.Status?.ToLower() == "pending")
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-3 py-1.5 fw-semibold" style="font-size: 0.85rem;">
+                                                @item.Status
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-1.5 fw-semibold" style="font-size: 0.85rem;">
+                                                @item.Status
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="pe-4 py-3 font-monospace text-muted" style="font-size: 0.9rem;">
+                                        @item.Date.ToString("yyyy-MM-dd / hh:mm:ss tt")
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <p class="m-0 fs-5 fw-medium">No transactions available yet.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- تلوين الكروت بستايل الـ Gradients الحديث والمميز للوحات التحكم -->
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #3a7bd5, #3a6073) !important;
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #11998e, #38ef7d) !important;
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #f12711, #f5af19) !important;
+    }
+
+    .tracking-wider {
+        letter-spacing: 0.05em;
+    }
+
+    .text-white-50 {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .bg-success-subtle {
+        background-color: #d1e7dd !important;
+    }
+
+    .text-success {
+        color: #0f5132 !important;
+    }
+
+    .border-success-subtle {
+        border-color: #badbcc !important;
+    }
+
+    .bg-warning-subtle {
+        background-color: #fff3cd !important;
+    }
+
+    .text-warning-emphasis {
+        color: #664d03 !important;
+    }
+
+    .border-warning-subtle {
+        border-color: #ffecb5 !important;
+    }
+
+    .bg-secondary-subtle {
+        background-color: #e2e3e5 !important;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) > * {
+        --bs-table-bg-type: #fafbfc;
+    }
+
+    .fs-7 {
+        font-size: 0.8rem !important;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 1.1rem 0.5rem;
+    }
+
+    .card {
+        border: 1px solid #eef2f5 !important;
+    }
+</style>

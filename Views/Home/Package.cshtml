@@ -1,0 +1,180 @@
+﻿@model IEnumerable<Jahhezni.Models.Product>
+
+@{
+    ViewData["Title"] = "باكدج جهازك - جهزني";
+}
+
+<link rel="stylesheet" href="~/css/package.css" />
+
+<div class="container mt-5" dir="rtl">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+
+        <div>
+            <h2 class="text-primary fw-bold mb-1">
+                🏠 باقة "جهّزني" المقترحة
+            </h2>
+
+            <p class="text-muted mb-0">
+                اختار المنتجات المناسبة لتجهيز شقتك بسهولة
+            </p>
+        </div>
+
+        <button class="btn btn-dark position-relative px-4 py-2"
+                onclick="goToCart()">
+
+            🛒 السلة
+
+            <span id="cartCount"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                0
+            </span>
+
+        </button>
+
+    </div>
+
+    <!-- Products -->
+    <div class="row">
+
+        <div class="d-flex justify-content-between align-items-center mb-4" dir="rtl">
+            <button onclick="location.reload();" class="btn btn-outline-info fw-bold px-4 py-2 d-flex align-items-center gap-2" style="border-radius: 8px; border-color: #00bcd4; color: #00bcd4;">
+                <i class="fas fa-redo-alt"></i>
+                أقتراح باقة أخرى بميزانيتي 
+            </button>
+        </div>
+
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden; background-color: #fff;">
+
+                    <img src="@(string.IsNullOrEmpty(item.Images) || item.Images == "placeholder.jpg" || item.Images == "placeholder.png"
+                                                           ? "https://placehold.co/300x250?text=Jahhezni"
+                                                           : "/images/" + item.Images)"
+                     class="card-img-top img-fluid"
+                     style="height: 260px; width: 100%; object-fit: fill; border-top-left-radius: 12px; border-top-right-radius: 12px;"
+                     alt="منتج جهّزني" />
+
+                    <div class="card-body text-end d-flex flex-column justify-content-between p-3" dir="rtl">
+
+                        <div>
+                            <p class="text-dark mb-3" style="line-height: 1.6; font-size: 1.05rem; font-weight: 500; min-height: 55px;">
+                                @item.Description
+                            </p>
+
+                            <div class="mb-3">
+                                <span class="fw-bold text-success" style="font-size: 1.1rem;">
+                                    @item.Price ج.م
+                                </span>
+                            </div>
+                        </div>
+
+                        <button class="add-btn btn btn-primary w-100 fw-bold py-2 mt-auto"
+                                style="border-radius: 8px; background-color: #00bcd4; border: none;"
+                                id="btn-@item.ProductId"
+                                data-id="@item.ProductId"
+                                onclick="toggleCart(this)">
+
+                            إضافة للسلة 🛒
+
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+                }
+
+    </div>
+
+</div>
+
+<style>
+
+    .product-card {
+        border-radius: 18px;
+        transition: 0.3s ease;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+</style>
+
+<script>
+
+        function toggleCart(btn) {
+
+        const productId = parseInt(btn.dataset.id);
+
+        fetch('/Home/AddToCart?productId=' + productId, {
+
+            method: 'POST'
+
+        })
+
+        .then(r => r.json())
+
+        .then(data => {
+
+            if(data.success){
+
+                let count =
+                document.getElementById("cartCount");
+
+                if(count){
+
+                    count.innerText =
+                    data.cartCount;
+                }
+
+                if(data.isAdded){
+
+                    btn.classList.remove("btn-primary");
+                    btn.classList.add("btn-success");
+                    btn.innerHTML =
+                    "تمت الإضافة ✅";
+
+                } else {
+
+                    btn.classList.remove("btn-success");
+                    btn.classList.add("btn-primary");
+                    btn.innerHTML =
+                    "إضافة للسلة 🛒";
+                }
+
+            }
+
+        })
+
+        .catch(err => console.log(err));
+
+    }
+
+        async function loadCartState() {
+
+        const cartCount =
+        document.getElementById("cartCount");
+
+        if(cartCount){
+
+            let current =
+            parseInt(cartCount.innerText) || 0;
+
+            cartCount.innerText = current;
+        }
+
+    }
+
+        function goToCart(){
+
+        window.location.href =
+        '/Home/CartPage';
+
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCartState);
+
+</script>

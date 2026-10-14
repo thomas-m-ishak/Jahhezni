@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "تأكيد الطلب";
+}
+
+<div class="card mt-5 p-4 shadow-sm border-0 text-end" style="border-radius: 15px; background-color: #fff;">
+    <h3 class="fw-bold mb-4" style="color: #ff6b8b;">📝 بيانات الشحن</h3>
+
+    <form action="/Home/ProcessCheckout" method="post">
+
+        <div class="row text-start" dir="rtl">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">الاسم بالكامل:</label>
+                <input type="text" name="FullName" class="form-control rounded-pill" placeholder="اكتبي اسمك بالكامل" required />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">رقم التليفون:</label>
+                <input type="tel" name="Phone" class="form-control rounded-pill" placeholder="رقم الموبايل للتواصل" required />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">المحافظة / المدينة:</label>
+                <input type="text" name="City" class="form-control rounded-pill" placeholder="المحافظة" required />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">العنوان بالتفصيل:</label>
+                <input type="text" name="Address" class="form-control rounded-pill" placeholder="الشارع، رقم العمارة، الشقة" required />
+            </div>
+        </div>
+
+        <hr style="border-color: #fff0f2;">
+
+        <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
+            <h4 class="fw-bold mb-0">
+                إجمالي المطلوب دفعه:
+                <span class="text-success fw-bold">@ViewBag.TotalAmount ج.م</span>
+            </h4>
+
+            <button type="submit" class="btn btn-lg rounded-pill px-5 text-white fw-bold shadow"
+                    style="background: linear-gradient(135deg, #ff6b8b, #ff8eaf); border: none; font-size: 1.1rem; transition: 0.3s;">
+                تأكيد الطلب والانتقال للدفع 🚀
+            </button>
+        </div>
+
+    </form>
+</div>

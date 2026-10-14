@@ -1,0 +1,157 @@
+﻿@model Jahhezni.Models.User
+@using Jahhezni.Models
+
+@{
+    ViewData["Title"] = "User Dashboard";
+    var orders = ViewBag.Orders as List<Order>;
+}
+
+<div class="container mt-4">
+
+    <h2 class="fw-bold text-primary mb-4">
+        👋 أهلاً بك يا @Model.Name
+    </h2>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="fw-bold mb-3">معلومات الحساب</h4>
+                    <p class="mb-2"><strong>الاسم:</strong> @Model.Name</p>
+                    <p class="mb-2"><strong>الإيميل:</strong> @Model.Email</p>
+                    <span class="badge bg-info p-2 mt-2">@Model.Role</span>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div style="width:100px; height:100px; border-radius:50%; background:#eee; line-height:100px; font-size:35px; margin:auto;">
+                        👤
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mb-3">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm p-3 border-0 bg-white" style="border-top: 4px solid #0d6efd !important;">
+                <h5 class="text-muted fw-bold mb-2">🛒 عدد الطلبات الكلي</h5>
+                <h2 class="text-primary fw-bold mb-0">@ViewBag.TotalOrders</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm p-3 border-0 bg-white" style="border-top: 4px solid #198754 !important;">
+                <h5 class="text-muted fw-bold mb-2">💰 إجمالي المصروفات بالسيستم</h5>
+                <h2 class="text-success fw-bold mb-0">@ViewBag.TotalSpent ج.م</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm p-3 border-0 bg-white" style="border-top: 4px solid #ffc107 !important;">
+                <h5 class="text-muted fw-bold mb-2">⏳ طلبات قيد التنفيذ</h5>
+                <h2 class="text-warning fw-bold mb-0">@ViewBag.PendingOrdersCount</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm p-3 border-0" style="background-color: #f8fff9; border-top: 4px solid #20c997 !important;">
+                <h5 class="text-success fw-bold mb-2">✅ إجمالي ما تم دفعه</h5>
+                <h2 class="text-success fw-bold mb-1">@ViewBag.TotalPaid ج.م</h2>
+                <small class="text-muted">(يشمل الطلبات المدفوعة والتي تم استلامها بالفعل)</small>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm p-3 border-0" style="background-color: #fffdf5; border-top: 4px solid #dc3545 !important;">
+                <h5 class="text-danger fw-bold mb-2">💸 مبالغ معلقة (قيد الانتظار)</h5>
+                <h2 class="text-danger fw-bold mb-1">@ViewBag.TotalPendingAmount ج.م</h2>
+                <small class="text-muted">(قيمة الطلبات المعلقة التي لم تُسدد قيمتها بعد)</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header fw-bold bg-white border-bottom py-3">
+            🛒 طلباتي
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table text-center align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>التاريخ</th>
+                        <th>الإجمالي</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (orders != null && orders.Any())
+                    {
+                        foreach (var order in orders)
+                        {
+                            <tr>
+                                <td class="fw-bold">
+                                    #@order.OrderId
+                                </td>
+
+                                <td>
+                                    @order.CreatedAt.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td class="text-success fw-bold">
+                                    @order.OrderTotal ج.م
+                                </td>
+
+                                <td>
+                                    @{
+                                        var currentStatus = order.Status?.ToLower() ?? "";
+                                    }
+
+                                    @if (currentStatus == "delivered")
+                                    {
+                                        <span class="badge bg-success px-3 py-2 fs-6">Delivered</span>
+                                    }
+                                    else if (currentStatus == "pending" || currentStatus == "pending delivery")
+                                    {
+                                        <span class="badge bg-danger text-white px-3 py-2 fs-6">Pending Delivery</span>
+                                    }
+                                    else if (currentStatus == "paid")
+                                    {
+                                        <span class="badge bg-primary text-white px-3 py-2 fs-6">Paid</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-dark px-3 py-2 fs-6">@order.Status</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-muted py-4">
+                                لا توجد طلبات حالياً 🛒
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-4 mb-5">
+        <div class="col-md-4 mb-2">
+            <a href="/Dashboard/EditUser/@Model.UserId" class="btn btn-outline-secondary w-100 py-2">
+                ✏️ تعديل بياناتي
+            </a>
+        </div>
+        <div class="col-md-4 mb-2">
+            <a href="/Home/HomePage" class="btn btn-primary w-100 fw-bold py-2">
+                🏠 الرئيسية
+            </a>
+        </div>
+    </div>
+
+</div>

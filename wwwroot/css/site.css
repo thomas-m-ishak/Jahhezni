@@ -1,0 +1,35 @@
+﻿/* استدعاء خطوط عربية ناعمة ومبهجة من جوجل */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:ital,wght@1,500&display=swap');
+
+body {
+    background-color: #fcfbfa !important; /* خلفية بيضاء دافئة ونظيفة */
+    color: #333333 !important;
+    font-family: 'Cairo', sans-serif !important;
+}
+
+/* بطاقات المنتجات بلون أبيض ناصع وحواف ناعمة جداً تليق بالعرائس */
+.card {
+    background-color: #ffffff !important;
+    border: 1px solid #f0e6e6 !important;
+    border-radius: 20px !important; /* حواف دائرية ناعمة */
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+}
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(255, 107, 139, 0.15) !important; /* ظل وردي خفيف جداً عند الـ Hover */
+        border-color: #ff6b8b !important;
+    }
+
+/* تظبيط الكنترولات والإنبوكس لتكون ناعمة ورقيقة */
+.form-control, .form-select {
+    background-color: #ffffff !important;
+    border: 1px solid #e0d5d5 !important;
+    border-radius: 10px !important;
+    color: #333 !important;
+}
+
+    .form-control:focus {
+        border-color: #ff6b8b !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 139, 0.25) !important;
+    }
